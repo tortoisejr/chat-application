@@ -2,6 +2,6 @@
   "editor.formatOnSave": true,
   "[javascript]": {
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "espenb.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }
