@@ -39,4 +39,5 @@ function addUsers(req, res, next) {
 
 module.exports = {
   getUsers,
+  addUser,
 };
