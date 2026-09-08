@@ -1,0 +1,99 @@
+<div class="modal-wrapper" id="add-user-modal">
+  <div class="modal">
+    <a href="#" onclick="closeModal()" class="modal-close">+</a>
+    <div class="modal-title">
+      <h2>Create New User</h2>
+    </div>
+    <div class="modal-body">
+      <form
+        method="post"
+        action="/users"
+        enctype="multipart/form-data"
+        id="add-user-form"
+      >
+        <input type="text" placeholder="enter name" name="name" />
+        <p class="error name-error"></p>
+        <input type="text" placeholder="enter email" name="email" />
+        <p class="error email-error"></p>
+        <input type="text" placeholder="enter mobile" name="mobile" />
+        <p class="error mobile-error"></p>
+        <input type="password" placeholder="enter password" name="password" />
+        <p class="error password-error"></p>
+        <input type="file" name="avatar" />
+        <p class="error avatar-error"></p>
+        <input type="submit" value="Submit" />
+        <p class="error common-error"></p>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  //create success toast
+  let successToast = Toastify({
+    text: "User was added successfully! Reloading the list...",
+    duration: 1000,
+  });
+
+  const modal = document.querySelector("#add-user-modal");
+  function closeModal() {
+    modal.style.display = "none";
+  }
+  function openModal() {
+    modal.style.display = "block";
+  }
+
+  const form = document.querySelector("#add-user-form");
+
+  form.onsubmit = async function (event) {
+    event.preventDefault();
+
+    const formData = new FormData(form);
+
+    //set all error para hiddin
+    const allErrorFields = document.querySelectorAll("p.error");
+    allErrorFields.forEach((item) => {
+      item.style.display = "none";
+    });
+
+    //remove error class form all input field
+    const inputErrors = document.querySelectorAll("input.error");
+    inputErrors.forEach((item) => {
+      item.classList.remove("error");
+    });
+
+    //send the request to the server
+    const response = await fetch("./users", {
+      method: "POST",
+      body: formData,
+    });
+
+    //get response
+    const result = await response.json();
+
+    //find the error fileds
+    const erorrFileds = Object.keys(result.errors);
+    
+    // handle the error fields
+    if (erorrFileds.length > 0) {
+      //add errro class for input filed
+      erorrFileds.forEach((fieldName) => {
+        form[fieldName].classList.add("error");
+      });
+      //show the error message for each input field
+      erorrFileds.forEach((fieldName) => {
+        const errorPlaceholder = document.querySelector(`.${fieldName}-error`);
+        //set the error message
+        errorPlaceholder.textContent = result.errors[fieldName].msg;
+        //display the error message
+        errorPlaceholder.style.display = "block";
+      });
+    } else {
+      closeModal();
+      successToast.showToast();
+
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+    }
+  };
+</script>
